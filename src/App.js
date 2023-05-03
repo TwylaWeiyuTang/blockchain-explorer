@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Block from "./pages/Block";
+import Transaction from "./pages/Transaction";
+import Address from "./pages/Address";
 
 // Refer to the README doc for more information about using API
 // keys in client-side code. You should never do this in production
@@ -38,6 +40,8 @@ function App() {
       </Route>
       {/* Can also use a named `children` prop */}
       <Route path="/block/:id" children={<Block />} />
+      <Route path="/transaction/:id" children={<Transaction />} />
+      <Route path="/address/:id" children={<Address />} />
     </Switch>
   );
 }
