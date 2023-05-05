@@ -20,7 +20,7 @@ const settings = {
 //
 // You can read more about the packages here:
 //   https://docs.alchemy.com/reference/alchemy-sdk-api-surface-overview#api-surface
-const alchemy = new Alchemy(settings);
+export const alchemy = new Alchemy(settings);
 
 function App() {
   // const [blockNumber, setBlockNumber] = useState();

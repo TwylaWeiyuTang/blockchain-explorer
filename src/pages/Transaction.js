@@ -16,7 +16,7 @@ const Transaction = () => {
   let { id } = useParams();
   return (
     <Container>
-      <Wrapper>Transaction: {id.slice(0, id.length - 1)}</Wrapper>
+      <Wrapper>Transaction: {id}</Wrapper>
     </Container>
   );
 };

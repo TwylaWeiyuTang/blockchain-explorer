@@ -9,6 +9,7 @@ import { url } from "../components/FinalisedBlock";
 import { device } from "../utils/utils";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import Tooltip from "../components/Toolips";
 
 const Container = styled.div`
   @media ${device.tablet} {
@@ -105,17 +106,19 @@ const Block = () => {
           {transactions.slice(0, 10).map((tra, i) => (
             <tr key={i}>
               <td>
-                <Link to={`/transaction/${tra.hash}}`}>
-                  {tra.hash.slice(0, 10)}...
-                </Link>
+                <Tooltip content={tra.hash}>
+                  <Link to={`/transaction/${tra.hash}}`}>
+                    {tra.hash.slice(0, 10)}...
+                  </Link>
+                </Tooltip>
               </td>
               <td>{Web3.utils.fromWei(`${parseInt(tra.value)}`, "ether")}</td>
               <td>
-                <Link to={`/address/${tra.from}}`}>{tra.from}</Link>
+                <Link to={`/address/${tra.from}`}>{tra.from}</Link>
               </td>
               <td>
                 {" "}
-                <Link to={`/address/${tra.to}}`}>{tra.to}</Link>
+                <Link to={`/address/${tra.to}`}>{tra.to}</Link>
               </td>
               <td>
                 {tra.gasPrice &&
