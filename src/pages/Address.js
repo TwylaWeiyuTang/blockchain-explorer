@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { device } from "../utils/utils";
 import { useParams } from "react-router-dom";
 import { Alchemy, Network } from "alchemy-sdk";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import axios from "axios";
 import { url } from "../components/FinalisedBlock";
@@ -12,8 +12,19 @@ import Web3 from "web3";
 import { alchemy } from "../App";
 
 import Tooltip from "../components/Toolips";
+import {
+  Stats,
+  StatsInner,
+  TableContainer,
+  Title,
+  TitleWrapper,
+  TraTitle,
+  Transactions,
+} from "./Block";
+import hamster from "../images/picsvg_download.svg";
 
 const Container = styled.div`
+  padding: 0 50px;
   @media ${device.tablet} {
   }
 `;
@@ -23,7 +34,21 @@ const Wrapper = styled.div`
   }
 `;
 
+const ItemWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  @media ${device.tablet} {
+  }
+`;
+
 const Left = styled.div`
+  img {
+    &.token {
+      padding: 0 10px;
+    }
+  }
   @media ${device.tablet} {
   }
 `;
@@ -43,7 +68,7 @@ export const etherscanAPI = (address = "") => `https://api.etherscan.io/api
 &sort=desc
 &apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`;
 
-const Address = () => {
+const Address = ({ ethPrice }) => {
   let { id } = useParams();
   const [transactions, setTransactions] = useState();
   const [balance, setBalance] = useState(0);
@@ -81,6 +106,7 @@ const Address = () => {
         );
         current.name = res.name;
         current.symbol = res.symbol;
+        current.logo = res.logo;
         setTokens(tokensList);
       });
     };
@@ -91,91 +117,126 @@ const Address = () => {
   return (
     <Container>
       <Wrapper>
-        <div>Address: {id}</div>
-        <div>Ether Balance: {balance}</div>
-        <div>Ether Balance Value: </div>
-        <div>
-          Tokens:
-          <Dropdown>
-            <Dropdown.Toggle id="dropdown-autoclose-true">
-              Token Balances
-            </Dropdown.Toggle>
+        <TitleWrapper>
+          <Title>Address: {id}</Title>
+        </TitleWrapper>
+        <Stats>
+          <StatsInner>
+            {" "}
+            <img src={hamster} alt="hamster icon" />
+            Ether Balance: {balance} eth
+          </StatsInner>
+          <StatsInner>
+            <img src={hamster} alt="hamster icon" />
+            Ether Balance Value: ${balance * ethPrice}
+          </StatsInner>
+          <StatsInner>
+            <Dropdown>
+              <Dropdown.Toggle id="dropdown-autoclose-true">
+                Token Balances
+              </Dropdown.Toggle>
 
-            <Dropdown.Menu>
-              {tokens.map((token, i) => (
-                <Dropdown.Item
-                  href={`/address/${token.contractAddress}`}
-                  key={i}
-                >
-                  <Left>
-                    {token.name} ({token.symbol})
-                  </Left>
-                  <Right>{parseInt(token.tokenBalance).toLocaleString()}</Right>
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div>Latest 10 transactions:</div>
-        <Table responsive striped bordered hover variant="dark">
-          <thead>
-            <tr>
-              <th>Transaction Hash</th>
-              <th>Block</th>
-              <th>Method</th>
-              <th>Timestamp</th>
-              <th>From</th>
-              <th>In / Out</th>
-              <th>To</th>
-              <th>Value</th>
-              <th>Transaction Fee (in ETH)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions &&
-              transactions.map((tra, i) => (
-                <tr key={i}>
-                  <td>
-                    <Tooltip content={tra.hash}>
-                      <Link to={`/transaction/${tra.hash}`}>
-                        {tra.hash.slice(0, 10)}...
-                      </Link>
-                    </Tooltip>
-                  </td>
-                  <td>
-                    <Link to={`/block/${tra.blockNumber}`}>
-                      {tra.blockNumber}
-                    </Link>
-                  </td>
-                  <td>{Web3.utils.hexToString(`${tra.methodId}`)}</td>
-                  <td>
-                    {new Date(tra.timeStamp * 1000).toLocaleTimeString()}{" "}
-                    {new Date(tra.timeStamp * 1000).toLocaleDateString()}
-                  </td>
-                  <td>
-                    {" "}
-                    <Link to={`/address/${tra.from}`}>{tra.from}</Link>
-                  </td>
-                  <td>
-                    {tra.from.toLocaleLowerCase() === id.toLocaleLowerCase()
-                      ? "Out"
-                      : "In"}
-                  </td>
-                  <td>
-                    <Link to={`/address/${tra.to}`}>{tra.to}</Link>
-                  </td>
-                  <td>{Web3.utils.fromWei(tra.value)}</td>
-                  <td>
-                    {tra.gasPrice &&
-                      tra.gasUsed &&
-                      Web3.utils.fromWei(
-                        `${parseInt(tra.gasPrice) * parseInt(tra.gasUsed)}`
-                      )}
-                  </td>
+              <Dropdown.Menu>
+                {tokens.map((token, i) => (
+                  <Dropdown.Item
+                    href={`/address/${token.contractAddress}`}
+                    key={i}
+                  >
+                    <ItemWrapper>
+                      <Left>
+                        {token.logo ? (
+                          <img
+                            src={token.logo}
+                            alt="token logo"
+                            className="token"
+                          />
+                        ) : (
+                          <img src={hamster} alt="placeholder-hamster" />
+                        )}
+                        {token.name} ({token.symbol})
+                      </Left>
+                      <Right>
+                        {parseInt(token.tokenBalance).toLocaleString()}
+                      </Right>
+                    </ItemWrapper>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </StatsInner>
+        </Stats>
+
+        <Transactions>
+          <TraTitle>Latest 10 transactions:</TraTitle>
+          <TableContainer>
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>Transaction Hash</th>
+                  <th>Block</th>
+                  <th>Method</th>
+                  <th>Timestamp</th>
+                  <th>From</th>
+                  <th>In / Out</th>
+                  <th>To</th>
+                  <th>Value</th>
+                  <th>Transaction Fee (in ETH)</th>
                 </tr>
-              ))}
-          </tbody>
-        </Table>
+              </thead>
+              <tbody>
+                {transactions &&
+                  transactions.map((tra, i) => (
+                    <tr key={i}>
+                      <td>
+                        <Tooltip content={tra.hash}>
+                          <Link to={`/transaction/${tra.hash}`}>
+                            {tra.hash.slice(0, 15)}...
+                          </Link>
+                        </Tooltip>
+                      </td>
+                      <td>
+                        <Link to={`/block/${tra.blockNumber}`}>
+                          {tra.blockNumber}
+                        </Link>
+                      </td>
+                      <td>{tra.methodId}</td>
+                      <td>
+                        {new Date(tra.timeStamp * 1000).toLocaleTimeString()}{" "}
+                        {new Date(tra.timeStamp * 1000).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <Tooltip content={tra.from}>
+                          <Link to={`/address/${tra.from}`}>
+                            {tra.from.slice(0, 15)}...
+                          </Link>
+                        </Tooltip>
+                      </td>
+                      <td>
+                        {tra.from.toLocaleLowerCase() === id.toLocaleLowerCase()
+                          ? "Out"
+                          : "In"}
+                      </td>
+                      <td>
+                        <Tooltip content={tra.to}>
+                          <Link to={`/address/${tra.to}`}>
+                            {tra.to.slice(0, 15)}...
+                          </Link>
+                        </Tooltip>
+                      </td>
+                      <td>{Web3.utils.fromWei(`${tra.value}`)}</td>
+                      <td>
+                        {tra.gasPrice &&
+                          tra.gasUsed &&
+                          Web3.utils.fromWei(
+                            `${parseInt(tra.gasPrice) * parseInt(tra.gasUsed)}`
+                          )}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </TableContainer>
+        </Transactions>
       </Wrapper>
     </Container>
   );

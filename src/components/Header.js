@@ -6,6 +6,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Profile } from "./WalletData";
 import { device } from "../utils/utils";
 
+import hamster from "../images/picsvg_download.svg";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,7 +19,7 @@ const Header = () => {
   return (
     <Navbar>
       <Navbar.Brand as={Link} to={"/"} className="nav">
-        Displore Ethereum Explorer
+        <img src={hamster} alt="logo" width={"80px"} /> Coco Da Explorer
       </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse className="justify-content-end">

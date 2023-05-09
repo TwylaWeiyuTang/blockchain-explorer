@@ -25,16 +25,31 @@ a:hover {
 }
 
 .dropdown-menu {
-  width: ;
+  width: 500px;
   height: 400px;
   overflow-y: scroll;
+  background-color: #000 !important;
+  color: #ff7ab8 !important;
 }
 
 .nav {
   font-weight: 700;
   font-size: 24px !important;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .navbar-expand {
   padding: 20px 50px !important;
+}
+
+#dropdown-autoclose-true {
+  background-color: #000 !important;
+  color: #ff7ab8 !important;
+  border: none !important;
+}
+
+.btn:hover {
+  border: none !important;
 }

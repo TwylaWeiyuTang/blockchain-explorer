@@ -19,7 +19,7 @@ const Container = styled.div`
   }
 `;
 
-const TitleWrapper = styled.div`
+export const TitleWrapper = styled.div`
   display: flex;
   flex-direction: row;
 
@@ -37,7 +37,7 @@ const TitleWrapper = styled.div`
   }
 `;
 
-const Title = styled.div`
+export const Title = styled.div`
   font-size: 20px;
   font-weight: 600px !important;
   margin-right: 20px;
@@ -45,7 +45,7 @@ const Title = styled.div`
   }
 `;
 
-const Stats = styled.div`
+export const Stats = styled.div`
   height: 300px;
   font-size: 16px;
   display: flex;
@@ -55,7 +55,7 @@ const Stats = styled.div`
   }
 `;
 
-const StatsInner = styled.div`
+export const StatsInner = styled.div`
   img {
     width: 50px;
   }
@@ -63,7 +63,7 @@ const StatsInner = styled.div`
   }
 `;
 
-const Transactions = styled.div`
+export const Transactions = styled.div`
   background-color: #ff7ab8;
   height: 600px;
   border-radius: 50px;
@@ -76,7 +76,7 @@ const Transactions = styled.div`
   }
 `;
 
-const TraTitle = styled.div`
+export const TraTitle = styled.div`
   width: calc(100vw - 200px);
   font-size: 20px;
   font-weight: 600;
@@ -84,7 +84,7 @@ const TraTitle = styled.div`
   }
 `;
 
-const TableContainer = styled.div`
+export const TableContainer = styled.div`
   width: calc(100vw - 200px);
   @media ${device.tablet} {
   }
@@ -203,7 +203,7 @@ const Block = () => {
                 <tr key={i}>
                   <td>
                     <Tooltip content={tra.hash}>
-                      <Link to={`/transaction/${tra.hash}}`}>
+                      <Link to={`/transaction/${tra.hash}`}>
                         {tra.hash.slice(0, 15)}...
                       </Link>
                     </Tooltip>

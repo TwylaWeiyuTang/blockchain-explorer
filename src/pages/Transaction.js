@@ -6,8 +6,12 @@ import axios from "axios";
 import { url } from "../components/FinalisedBlock";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
+import { Stats, StatsInner, Title, TitleWrapper } from "./Block";
+import hamster from "../images/picsvg_download.svg";
+import { Badge } from "react-bootstrap";
 
 const Container = styled.div`
+  padding: 0 50px;
   @media ${device.tablet} {
   }
 `;
@@ -41,36 +45,53 @@ const Transaction = () => {
   return (
     <Container>
       <Wrapper>
-        <div>Transaction: {id}</div>
-        <div>
-          Block Number: <Link to={`/block/${block}`}>{block}</Link>
-        </div>
-        <div>
-          Status:{" "}
-          {parseInt(transactionData.status) === 1 ? "Success" : "Failed"}
-        </div>
-        <div>
-          From:{" "}
-          <Link to={`/address/${transactionData.from}`}>
-            {transactionData.from}
-          </Link>
-        </div>
-        <div>
-          To:{" "}
-          <Link to={`/address/${transactionData.to}`}>
-            {transactionData.to}
-          </Link>
-        </div>
-        <div>Gas used: {parseInt(transactionData.gasUsed)}</div>
-        <div>
-          Transaction Fee:{" "}
-          {transactionData.effectiveGasPrice &&
-            transactionData.gasUsed &&
-            Web3.utils.fromWei(
-              `${transactionData.effectiveGasPrice * transactionData.gasUsed}`
-            )}{" "}
-          ETH
-        </div>
+        <TitleWrapper>
+          <Title>Transaction: {id}</Title>
+          <Badge bg="primary" style={{ fontSize: "unset" }}>
+            {parseInt(transactionData.status) === 1 ? "Success" : "Failed"}
+          </Badge>
+        </TitleWrapper>
+
+        <Stats>
+          <StatsInner>
+            <img src={hamster} alt="hamster icon" />
+            Block Number: <Link to={`/block/${block}`}>{block}</Link>
+          </StatsInner>
+          <StatsInner>
+            <img src={hamster} alt="hamster icon" />
+            Status:{" "}
+            {parseInt(transactionData.status) === 1 ? "Success" : "Failed"}
+          </StatsInner>
+          <StatsInner>
+            <img src={hamster} alt="hamster icon" />
+            From:{" "}
+            <Link to={`/address/${transactionData.from}`}>
+              {transactionData.from}
+            </Link>
+          </StatsInner>
+          <StatsInner>
+            <img src={hamster} alt="hamster icon" />
+            To:{" "}
+            <Link to={`/address/${transactionData.to}`}>
+              {transactionData.to}
+            </Link>
+          </StatsInner>
+          <StatsInner>
+            {" "}
+            <img src={hamster} alt="hamster icon" />
+            Gas used: {parseInt(transactionData.gasUsed)}
+          </StatsInner>
+          <StatsInner>
+            <img src={hamster} alt="hamster icon" />
+            Transaction Fee:{" "}
+            {transactionData.effectiveGasPrice &&
+              transactionData.gasUsed &&
+              Web3.utils.fromWei(
+                `${transactionData.effectiveGasPrice * transactionData.gasUsed}`
+              )}{" "}
+            ETH
+          </StatsInner>
+        </Stats>
       </Wrapper>
     </Container>
   );

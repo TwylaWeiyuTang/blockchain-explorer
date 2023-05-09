@@ -16,7 +16,7 @@ export const Profile = () => {
   return (
     <Wrapper>
       {isConnected && (
-        <Link to={`/address/${address}`}>View your address details</Link>
+        <Link to={`/address/${address}`}>View my address details</Link>
       )}
     </Wrapper>
   );
