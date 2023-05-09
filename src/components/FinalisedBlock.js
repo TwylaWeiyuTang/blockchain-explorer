@@ -16,8 +16,10 @@ const Container = styled.div`
   justify-content: center;
   aspect-ratio: 3/4;
 
-  border: 3px solid #02006b;
+  border: 3px solid #ff7ab8;
+  background-color: #ff7ab8;
   border-radius: 15px;
+  color: #1a1b1f;
 
   @media ${device.tablet} {
   }
@@ -27,9 +29,11 @@ const Container = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 36px;
+  font-size: 32px;
+  font-weight: 600;
   margin-bottom: 50px;
   text-transform: capitalize;
+
   @media ${device.tablet} {
   }
 `;
@@ -54,26 +58,30 @@ const FinalisedBlock = ({ blockType }) => {
 
   useEffect(() => {
     async function getFinalizedBlocks() {
-      const blockList = [];
+      try {
+        const blockList = [];
 
-      // fetching the most recent finalised block
-      const finResponse = await axios.post(url, {
-        jsonrpc: "2.0",
-        id: 0,
-        method: "eth_getBlockByNumber",
-        params: [blockType, true],
-      });
+        // fetching the most recent finalised block
+        const finResponse = await axios.post(url, {
+          jsonrpc: "2.0",
+          id: 0,
+          method: "eth_getBlockByNumber",
+          params: [blockType, true],
+        });
 
-      setLatest(parseInt(finResponse.data.result.number));
+        setLatest(parseInt(finResponse.data.result.number));
 
-      blockList.push(latestBlock);
+        blockList.push(latestBlock);
 
-      for (let i = 1; i < 6; i++) {
-        blockList.push(latestBlock - i);
+        for (let i = 1; i < 6; i++) {
+          blockList.push(latestBlock - i);
+        }
+
+        // set 6 the most recent finalised blocks
+        setBlocks(blockList);
+      } catch (err) {
+        console.log(err);
       }
-
-      // set 6 the most recent finalised blocks
-      setBlocks(blockList);
     }
 
     getFinalizedBlocks();

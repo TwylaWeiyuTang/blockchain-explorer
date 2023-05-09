@@ -3,12 +3,14 @@ import { device } from "../utils/utils";
 import { useParams } from "react-router-dom";
 import { Alchemy, Network } from "alchemy-sdk";
 import { useEffect, useState } from "react";
+import { Dropdown } from "react-bootstrap";
 import axios from "axios";
 import { url } from "../components/FinalisedBlock";
 import { Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
 import { alchemy } from "../App";
+
 import Tooltip from "../components/Toolips";
 
 const Container = styled.div`
@@ -17,6 +19,16 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
+  @media ${device.tablet} {
+  }
+`;
+
+const Left = styled.div`
+  @media ${device.tablet} {
+  }
+`;
+
+const Right = styled.div`
   @media ${device.tablet} {
   }
 `;
@@ -35,13 +47,14 @@ const Address = () => {
   let { id } = useParams();
   const [transactions, setTransactions] = useState();
   const [balance, setBalance] = useState(0);
-  const [tokenBalance, setTokenBalance] = useState([]);
+  const [tokens, setTokens] = useState([]);
 
   useEffect(() => {
     const getTransfers = async () => {
       // fetch all the transactions with a given address
       let etherscanRes = await axios.post(etherscanAPI(id));
-      setTransactions(etherscanRes.data.result);
+      setTransactions(etherscanRes.data.result.slice(0, 10));
+      console.log(etherscanRes.data.result.slice(0, 10));
 
       // get ethereum balance for a given address
       let getBalance = await axios.post(url, {
@@ -55,32 +68,55 @@ const Address = () => {
 
       // fetch all the erc-20 token balance
       let response = await alchemy.core.getTokenBalances(id);
-      console.log(response.tokenBalances);
-      setTokenBalance(response.tokenBalances);
+      const { tokenBalances } = response;
 
-      // transferList.map(async (tra, i) => {
-      //   const traRes = await axios.post(url, {
-      //     jsonrpc: "2.0",
-      //     id: i,
-      //     method: "eth_getTransactionReceipt",
-      //     params: [tra.hash],
-      //   });
+      setTokens(tokenBalances);
 
-      //   let tra.
-
-      //   console.log(traRes);
+      // get all the tokens metadata with its address returned from last step
+      tokenBalances.forEach(async (token) => {
+        let res = await alchemy.core.getTokenMetadata(token.contractAddress);
+        const tokensList = [...tokenBalances];
+        const current = tokensList.find(
+          (a) => a.contractAddress === token.contractAddress
+        );
+        current.name = res.name;
+        current.symbol = res.symbol;
+        setTokens(tokensList);
+      });
     };
+
     getTransfers();
   }, [id]);
-
-  // console.log(accountData.map((acc) => acc.hash));
 
   return (
     <Container>
       <Wrapper>
         <div>Address: {id}</div>
         <div>Ether Balance: {balance}</div>
-        <div>Balance Value: </div>
+        <div>Ether Balance Value: </div>
+        <div>
+          Tokens:
+          <Dropdown>
+            <Dropdown.Toggle id="dropdown-autoclose-true">
+              Token Balances
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {tokens.map((token, i) => (
+                <Dropdown.Item
+                  href={`/address/${token.contractAddress}`}
+                  key={i}
+                >
+                  <Left>
+                    {token.name} ({token.symbol})
+                  </Left>
+                  <Right>{parseInt(token.tokenBalance).toLocaleString()}</Right>
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        <div>Latest 10 transactions:</div>
         <Table responsive striped bordered hover variant="dark">
           <thead>
             <tr>
@@ -101,7 +137,7 @@ const Address = () => {
                 <tr key={i}>
                   <td>
                     <Tooltip content={tra.hash}>
-                      <Link to={`/transaction/${tra.hash}}`}>
+                      <Link to={`/transaction/${tra.hash}`}>
                         {tra.hash.slice(0, 10)}...
                       </Link>
                     </Tooltip>
@@ -111,14 +147,23 @@ const Address = () => {
                       {tra.blockNumber}
                     </Link>
                   </td>
-                  <td>{tra.methodId}</td>
+                  <td>{Web3.utils.hexToString(`${tra.methodId}`)}</td>
                   <td>
                     {new Date(tra.timeStamp * 1000).toLocaleTimeString()}{" "}
                     {new Date(tra.timeStamp * 1000).toLocaleDateString()}
                   </td>
-                  <td>{tra.from}</td>
-                  <td>{tra.from === id ? "Out" : "In"}</td>
-                  <td>{tra.to}</td>
+                  <td>
+                    {" "}
+                    <Link to={`/address/${tra.from}`}>{tra.from}</Link>
+                  </td>
+                  <td>
+                    {tra.from.toLocaleLowerCase() === id.toLocaleLowerCase()
+                      ? "Out"
+                      : "In"}
+                  </td>
+                  <td>
+                    <Link to={`/address/${tra.to}`}>{tra.to}</Link>
+                  </td>
                   <td>{Web3.utils.fromWei(tra.value)}</td>
                   <td>
                     {tra.gasPrice &&
