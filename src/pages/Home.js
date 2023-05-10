@@ -4,6 +4,11 @@ import { device } from "../utils/utils";
 import styled from "styled-components";
 import axios from "axios";
 import Web3 from "web3";
+import SearchBar from "../components/SearchBar";
+import { alchemy } from "../App";
+import { Line } from "react-chartjs-2";
+import { Chart as ChartJS } from "chart.js/auto";
+import { Chart } from "react-chartjs-2";
 
 const Container = styled.div`
   width: 100vw;
@@ -83,6 +88,12 @@ const BlockContainer = styled.div`
   }
 `;
 
+const ChartContainer = styled.div`
+  width: 30%;
+  @media ${device.tablet} {
+  }
+`;
+
 const supplyAPI = `https://api.etherscan.io/api
 ?module=stats
 &action=ethsupply
@@ -91,6 +102,123 @@ const supplyAPI = `https://api.etherscan.io/api
 const Home = ({ ethPrice }) => {
   const [ethSupply, setEthSupply] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
+  const [feehistory, setFeeHistory] = useState([]);
+  const [blockNum, setBlockNum] = useState([]);
+
+  // gas fee data for chart
+  const data = {
+    labels: blockNum,
+    datasets: [
+      {
+        label: "Recent 5 blocks' base fee per gas",
+        borderColor: "#ff7ab8",
+        data: feehistory,
+      },
+    ],
+  };
+
+  // ui setup for chart
+  const options = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: "#ffe5d9",
+          font: {
+            size: 16,
+          },
+        },
+        tooltip: {
+          // bodyFont: {
+          //   family: "Montserrat", // Add your font here to change the font of your tooltip body
+          // },
+          titleFont: {
+            size: 16,
+          },
+        },
+      },
+    },
+    layout: {
+      padding: {
+        top: 0,
+      },
+    },
+    scales: {
+      y: {
+        ticks: {
+          color: "#ffe5d9",
+          font: {
+            size: 14,
+          },
+        },
+      },
+      x: {
+        ticks: {
+          color: "#ffe5d9",
+          font: {
+            size: 14,
+          },
+        },
+      },
+    },
+    // tooltips: {
+    //   backgroundColor: "#f5f5f5",
+    //   titleFontColor: "#333",
+    //   bodyFontColor: "#666",
+    //   bodySpacing: 4,
+    //   xPadding: 12,
+    //   mode: "nearest",
+    //   intersect: 0,
+    //   position: "nearest"
+    // },
+    // scales: {
+    //   yAxes: {
+    //     barPercentage: 1.6,
+    //     grid: {
+    //       display: false,
+    //       color: chartLineColor,
+    //       zeroLineColor: "transparent"
+    //     },
+    //     ticks: {
+    //       suggestedMin: 0,
+    //       suggestedMax: 125000,
+    //       padding: 2,
+    //       backdropPadding: 2,
+    //       backdropColor: "rgba(255,255,255,1)",
+    //       color: chartLineColor,
+    //       font: {
+    //         family: "Montserrat", // Add your font here to change the font of your y axis
+    //         size: 12
+    //       },
+    //       major: {
+    //         enable: true
+    //       }
+    //     }
+    //   },
+    //   xAxes: {
+    //     barPercentage: 1.6,
+    //     grid: {
+    //       display: false,
+    //       zeroLineColor: "transparent"
+    //     },
+    //     ticks: {
+    //       padding: 20,
+    //       color: chartLineColor,
+    //       font: {
+    //         family: "Montserrat", // Add your font here to change the font of your x axis
+    //         size: 12
+    //       },
+
+    //       major: {
+    //         enable: false
+    //       }
+    //     }
+    //   }
+    // }
+  };
+
   useEffect(() => {
     const getEthData = async () => {
       let resSupply = await axios.post(supplyAPI);
@@ -101,13 +229,42 @@ const Home = ({ ethPrice }) => {
       });
       setEthSupply(resSupply.data.result);
       setGasPrice(parseInt(resGasPrice.data.result));
+
+      let resFees = await alchemy.core.send("eth_feeHistory", [
+        "0x5",
+        "latest",
+        [],
+      ]);
+
+      const { baseFeePerGas, oldestBlock } = resFees;
+
+      // get block numbers data and set the state
+      let blockNumbers = [];
+
+      for (let i = 0; i < 5; i++) {
+        blockNumbers.push(parseInt(oldestBlock) + i);
+      }
+
+      setBlockNum(blockNumbers);
+
+      //// get gas fee data and set the state
+      let fees = [];
+
+      baseFeePerGas.map((fee) => {
+        fees.push(Web3.utils.fromWei(`${parseInt(fee)}`, "Gwei"));
+      });
+
+      setFeeHistory(fees);
     };
 
     getEthData();
-  }, []);
+
+    // getFeeHistory();
+  }, [blockNum]);
 
   return (
     <Container>
+      <SearchBar />
       <KeyStats>
         <ETHPriceContainer>
           <Title>Latest Ether Price</Title>${ethPrice}
@@ -124,6 +281,9 @@ const Home = ({ ethPrice }) => {
       <BlockContainer>
         <FinalisedBlock blockType={"finalized"} />
         <FinalisedBlock blockType={"latest"} />
+        <ChartContainer>
+          {feehistory && <Line data={data} options={options} />}
+        </ChartContainer>
       </BlockContainer>
     </Container>
   );

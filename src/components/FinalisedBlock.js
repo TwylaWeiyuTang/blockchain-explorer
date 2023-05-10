@@ -24,7 +24,7 @@ const Container = styled.div`
   @media ${device.tablet} {
   }
   @media ${device.laptop} {
-    width: 30vw;
+    width: 25vw;
   }
 `;
 

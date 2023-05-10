@@ -12,6 +12,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Tooltip from "../components/Toolips";
 import hamster from "../images/picsvg_download.svg";
+import NotFound from "./NotFound";
 
 const Container = styled.div`
   padding: 0 50px;
@@ -98,10 +99,12 @@ const Block = () => {
   const [date, setDate] = useState();
   const [blockData, setBlockData] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [hasError, setHasError] = useState(false);
+  const [isFinalized, setIsFinalized] = useState("");
 
   useEffect(() => {
-    async function getFinalizedBlocks() {
-      // fetching the most recent finalised block
+    async function getBlocks() {
+      // fetching the block by provided hex
       try {
         const finResponse = await axios.post(url, {
           jsonrpc: "2.0",
@@ -121,6 +124,21 @@ const Block = () => {
         } = finResponse.data.result;
 
         console.log(finResponse.data.result);
+
+        // get the latest finalized block number
+        const ifFinalize = await axios.post(url, {
+          jsonrpc: "2.0",
+          id: 0,
+          method: "eth_getBlockByNumber",
+          params: ["finalized", true],
+        });
+
+        // check if the one we are querying is finalized or not
+        if (id <= parseInt(ifFinalize.data.result.number)) {
+          setIsFinalized("Finalized");
+        } else {
+          setIsFinalized("Unfinalized");
+        }
 
         // converting hex timestamp to date time
         const timeInSeconds = parseInt(timestamp, 16);
@@ -151,94 +169,105 @@ const Block = () => {
         });
       } catch (err) {
         console.log(err);
+        setHasError(true);
       }
     }
 
-    getFinalizedBlocks();
+    getBlocks();
   }, [hex]);
 
   return (
-    <Container>
-      <TitleWrapper>
-        <Title>Block #{id}</Title>
-        <Badge bg="primary" style={{ fontSize: "unset" }}>
-          Finalized
-        </Badge>
-      </TitleWrapper>
-      <Stats>
-        <StatsInner>
-          <img src={hamster} alt="hamster icon" /> Timestamp: {date} BST
-        </StatsInner>
-        <StatsInner>
-          <img src={hamster} alt="hamster icon" /> Gas used:{" "}
-          {parseInt(blockData.gasUsed)} / {parseInt(blockData.gasLimit)} (
-          {(parseInt(blockData.gasUsed) / parseInt(blockData.gasLimit)) * 100}%)
-        </StatsInner>
-        <StatsInner>
-          <img src={hamster} alt="hamster icon" /> Block reward to:
-          <Link to={`/address/${blockData.miner}}`}>{blockData.miner} </Link>
-        </StatsInner>
-        <StatsInner>
-          {" "}
-          <img src={hamster} alt="hamster icon" /> Total Transactions:{" "}
-          {transactions.length}{" "}
-        </StatsInner>
-      </Stats>
+    <>
+      {!hasError ? (
+        <Container>
+          <TitleWrapper>
+            <Title>Block #{id}</Title>
+            <Badge bg="primary" style={{ fontSize: "unset" }}>
+              {isFinalized}
+            </Badge>
+          </TitleWrapper>
+          <Stats>
+            <StatsInner>
+              <img src={hamster} alt="hamster icon" /> Timestamp: {date} BST
+            </StatsInner>
+            <StatsInner>
+              <img src={hamster} alt="hamster icon" /> Gas used:{" "}
+              {parseInt(blockData.gasUsed)} / {parseInt(blockData.gasLimit)} (
+              {(parseInt(blockData.gasUsed) / parseInt(blockData.gasLimit)) *
+                100}
+              %)
+            </StatsInner>
+            <StatsInner>
+              <img src={hamster} alt="hamster icon" /> Block reward to:
+              <Link to={`/address/${blockData.miner}}`}>
+                {blockData.miner}{" "}
+              </Link>
+            </StatsInner>
+            <StatsInner>
+              {" "}
+              <img src={hamster} alt="hamster icon" /> Total Transactions:{" "}
+              {transactions.length}{" "}
+            </StatsInner>
+          </Stats>
 
-      <Transactions>
-        <TraTitle>Latest 10 transactions</TraTitle>
-        <TableContainer>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <th>Transaction Hash</th>
-                <th>Value (in ETH)</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Transaction Fee (in ETH)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.slice(0, 10).map((tra, i) => (
-                <tr key={i}>
-                  <td>
-                    <Tooltip content={tra.hash}>
-                      <Link to={`/transaction/${tra.hash}`}>
-                        {tra.hash.slice(0, 15)}...
-                      </Link>
-                    </Tooltip>
-                  </td>
-                  <td>
-                    {Web3.utils.fromWei(`${parseInt(tra.value)}`, "ether")}
-                  </td>
-                  <td>
-                    <Tooltip content={tra.from}>
-                      <Link to={`/address/${tra.from}`}>
-                        {tra.from.slice(0, 15)}...
-                      </Link>
-                    </Tooltip>
-                  </td>
-                  <td>
-                    <Tooltip content={tra.to}>
-                      <Link to={`/address/${tra.to}`}>
-                        {tra.to.slice(0, 15)}...
-                      </Link>
-                    </Tooltip>
-                  </td>
-                  <td>
-                    {tra.gasPrice &&
-                      tra.gasUsed &&
-                      Web3.utils.fromWei(
-                        `${parseInt(tra.gasPrice) * parseInt(tra.gasUsed)}`
-                      )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </TableContainer>
-      </Transactions>
-    </Container>
+          <Transactions>
+            <TraTitle>Latest 10 transactions</TraTitle>
+            <TableContainer>
+              <Table responsive hover>
+                <thead>
+                  <tr>
+                    <th>Transaction Hash</th>
+                    <th>Value (in ETH)</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Transaction Fee (in ETH)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.slice(0, 10).map((tra, i) => (
+                    <tr key={i}>
+                      <td>
+                        <Tooltip content={tra.hash}>
+                          <Link to={`/transaction/${tra.hash}`}>
+                            {tra.hash.slice(0, 15)}...
+                          </Link>
+                        </Tooltip>
+                      </td>
+                      <td>
+                        {Web3.utils.fromWei(`${parseInt(tra.value)}`, "ether")}
+                      </td>
+                      <td>
+                        <Tooltip content={tra.from}>
+                          <Link to={`/address/${tra.from}`}>
+                            {tra.from.slice(0, 15)}...
+                          </Link>
+                        </Tooltip>
+                      </td>
+                      <td>
+                        <Tooltip content={tra.to}>
+                          <Link to={`/address/${tra.to}`}>
+                            {tra.to.slice(0, 15)}...
+                          </Link>
+                        </Tooltip>
+                      </td>
+                      <td>
+                        {tra.gasPrice &&
+                          tra.gasUsed &&
+                          Web3.utils.fromWei(
+                            `${parseInt(tra.gasPrice) * parseInt(tra.gasUsed)}`
+                          )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </TableContainer>
+          </Transactions>
+        </Container>
+      ) : (
+        <NotFound />
+      )}
+    </>
   );
 };
 
