@@ -23,6 +23,8 @@ const Container = styled.div`
 export const TitleWrapper = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 
   padding-bottom: 12px;
   border-bottom: 1px #ff7ab8 solid;

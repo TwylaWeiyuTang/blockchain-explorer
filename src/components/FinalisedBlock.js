@@ -69,6 +69,8 @@ const FinalisedBlock = ({ blockType }) => {
           params: [blockType, true],
         });
 
+        console.log(finResponse.data.result);
+
         setLatest(parseInt(finResponse.data.result.number));
 
         blockList.push(latestBlock);

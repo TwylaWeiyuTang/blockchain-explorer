@@ -16,6 +16,7 @@ import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
+import { NotificationProvider } from "./config/Notification";
 
 const { chains, provider } = configureChains(
   [mainnet],
@@ -47,7 +48,9 @@ ReactDOM.render(
             ...darkTheme.accentColors.pink,
           })}
         >
-          <App />
+          <NotificationProvider>
+            <App />
+          </NotificationProvider>
         </RainbowKitProvider>
       </WagmiConfig>
     </BrowserRouter>

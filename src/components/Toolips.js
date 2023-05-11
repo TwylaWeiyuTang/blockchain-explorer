@@ -32,17 +32,41 @@ const TooltipRight = styled.div`
     margin-left: calc(6px * -1);
   }
 
-  &#right {
+  &.top {
+    top: calc(30px * -1);
+  }
+
+  &.top::before {
+    top: 100%;
+    border-top-color: #000;
+  }
+
+  &.right {
     left: calc(100% + 30px);
     top: 50%;
     transform: translateX(0) translateY(-50%);
   }
 
-  &#right::before {
+  &.right::before {
     left: calc(6px * -1);
     top: 50%;
     transform: translateX(0) translateY(-50%);
     border-right-color: black;
+  }
+
+  &.left {
+    left: auto;
+    right: calc(100% + 30px);
+    top: 50%;
+    transform: translateX(0) translateY(-50%);
+  }
+
+  &.left::before {
+    left: auto;
+    right: calc(6px * -2);
+    top: 50%;
+    transform: translateX(0) translateY(-50%);
+    border-left-color: #000;
   }
 `;
 
@@ -66,7 +90,7 @@ const Tooltip = (props) => {
       {/* Wrapping */}
       {props.children}
       {active && (
-        <TooltipRight id="right">
+        <TooltipRight className={` ${props.direction || "right"}`}>
           {/* Content */}
           {props.content}
         </TooltipRight>

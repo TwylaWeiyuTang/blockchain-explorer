@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { device } from "../utils/utils";
 import { useParams } from "react-router-dom";
-import { Alchemy, Network } from "alchemy-sdk";
+import { Alchemy, AlchemySubscription, Network } from "alchemy-sdk";
 import { useContext, useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import axios from "axios";
@@ -22,6 +22,9 @@ import {
   Transactions,
 } from "./Block";
 import hamster from "../images/picsvg_download.svg";
+import alarm from "../images/alarm.svg";
+import AlertTx from "../components/AlertTx";
+import NotificationContext from "../config/Notification";
 
 const Container = styled.div`
   padding: 0 50px;
@@ -58,6 +61,17 @@ const Right = styled.div`
   }
 `;
 
+const Alert = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  img {
+    width: 30px;
+  }
+  @media ${device.tablet} {
+  }
+`;
+
 export const etherscanAPI = (address = "") => `https://api.etherscan.io/api
 ?module=account
 &action=txlist
@@ -73,6 +87,14 @@ const Address = ({ ethPrice }) => {
   const [transactions, setTransactions] = useState();
   const [balance, setBalance] = useState(0);
   const [tokens, setTokens] = useState([]);
+  const [newTx, setNewTx] = useState();
+  const [isShow, setShow] = useState(false);
+
+  const notificationCtx = useContext(NotificationContext);
+
+  const listenUpdate = () => {
+    setShow(true);
+  };
 
   useEffect(() => {
     const getTransfers = async () => {
@@ -112,11 +134,43 @@ const Address = ({ ethPrice }) => {
     };
 
     getTransfers();
-  }, [id]);
+
+    // Subscription for Alchemy's minedTransactions API
+    alchemy.ws.on(
+      {
+        method: AlchemySubscription.MINED_TRANSACTIONS,
+        addresses: [
+          {
+            from: id,
+          },
+        ],
+        includeRemoved: true,
+        hashesOnly: false,
+      },
+      (tx) => setNewTx(tx.transaction.hash)
+    );
+
+    alchemy.ws.on(
+      {
+        method: AlchemySubscription.MINED_TRANSACTIONS,
+        addresses: [
+          {
+            to: id,
+          },
+        ],
+        includeRemoved: true,
+        hashesOnly: false,
+      },
+      (tx) => setNewTx(tx.transaction.hash)
+    );
+  }, [id, newTx]);
 
   return (
     <Container>
       <Wrapper>
+        {/* {newTx && (
+          <AlertTx message={`${id} has a new transaction!`} show={true} />
+        )} */}
         <TitleWrapper>
           <Title>Address: {id}</Title>
         </TitleWrapper>
