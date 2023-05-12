@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NotFound from "./pages/NotFound";
+import Footer from "./components/Footer";
 
 const settings = {
   apiKey: process.env.REACT_APP_ALCHEMY_API_KEY,
@@ -43,6 +44,7 @@ function App() {
         <Route path="/address/:id" children={<Address ethPrice={ethPrice} />} />
         <Route path="*" children={<NotFound />} />
       </Switch>
+      <Footer />
     </div>
   );
 }

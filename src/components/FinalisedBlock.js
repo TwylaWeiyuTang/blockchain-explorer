@@ -55,6 +55,7 @@ const BlocksWrapper = styled.div`
 const FinalisedBlock = ({ blockType }) => {
   const [blocks, setBlocks] = useState([]);
   const [latestBlock, setLatest] = useState();
+  const [blockData, setBlockData] = useState([]);
 
   useEffect(() => {
     async function getFinalizedBlocks() {
@@ -69,7 +70,10 @@ const FinalisedBlock = ({ blockType }) => {
           params: [blockType, true],
         });
 
-        console.log(finResponse.data.result);
+        // console.log(finResponse.data.result);
+        // const { timestamp, size, number } = finResponse.data.result;
+
+        // setBlockData({ timestamp, size, number });
 
         setLatest(parseInt(finResponse.data.result.number));
 

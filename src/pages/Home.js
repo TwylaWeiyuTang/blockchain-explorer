@@ -270,7 +270,7 @@ const Home = ({ ethPrice }) => {
           <Title>Latest Ether Price</Title>${ethPrice}
         </ETHPriceContainer>
         <MarketCap>
-          <Title>Makret Cap</Title>$
+          <Title>Market Cap</Title>$
           {(ethPrice * Web3.utils.fromWei(`${ethSupply}`)).toLocaleString()}
         </MarketCap>
         <GasPriceContainer>
