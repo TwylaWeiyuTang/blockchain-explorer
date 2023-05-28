@@ -66,6 +66,7 @@ export const Stats = styled.div`
   flex-direction: column;
   justify-content: space-around;
   @media ${device.tablet} {
+    padding-top: 0;
     min-height: 500px;
   }
 `;
