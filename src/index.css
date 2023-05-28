@@ -24,6 +24,10 @@ a:hover {
   text-decoration: underline !important;
 }
 
+.navbar-expand {
+  flex-wrap: wrap !important;
+}
+
 .dropdown-menu {
   width: 500px;
   height: 400px;
@@ -40,8 +44,9 @@ a:hover {
   align-items: center;
 }
 
-.navbar-expand {
-  padding: 20px 50px !important;
+.navbar-collapse {
+  justify-content: center;
+  flex-direction: column;
 }
 
 #dropdown-autoclose-true {
@@ -52,4 +57,27 @@ a:hover {
 
 .btn:hover {
   border: none !important;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .navbar-collapse {
+    justify-content: end;
+    flex-direction: row;
+    margin-bottom: 30px;
+  }
+
+  .navbar-expand {
+    padding: 0 20px !important;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .navbar-collapse {
+    justify-content: end;
+    flex-direction: row;
+  }
+  .navbar-expand {
+    flex-wrap: nowrap;
+    padding: 20px 50px !important;
+  }
 }

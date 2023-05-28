@@ -2,22 +2,27 @@ import styled from "styled-components";
 import { device } from "../utils/utils";
 
 const Container = styled.div`
-  margin-top: 200px;
+  margin-top: 150px;
   width: 100vw;
   height: 80vh;
   background-color: #ff7ab8;
-  border-top-left-radius: 100px;
-  border-top-right-radius: 100px;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
 
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  text-align: center;
 
   color: #1a1b1f;
   @media ${device.laptop} {
+    margin-top: 200px;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
     height: 40vh;
+    flex-direction: row;
   }
 `;
 
@@ -35,11 +40,10 @@ const Center = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  svg {
-    width: 300px;
-  }
-  @media ${device.tablet} {
+  @media ${device.laptop} {
+    svg {
+      width: 300px;
+    }
   }
 `;
 

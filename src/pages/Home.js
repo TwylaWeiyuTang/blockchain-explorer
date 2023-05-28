@@ -18,6 +18,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  overflow: hidden;
   @media ${device.tablet} {
   }
   @media ${device.laptop} {
@@ -26,13 +27,16 @@ const Container = styled.div`
 `;
 
 const KeyStats = styled.div`
-  height: 300px;
+  min-height: 300px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: calc(100vw - 100px);
   justify-content: space-around;
   align-items: center;
   @media ${device.tablet} {
+    height: 300px;
+    min-height: unset;
+    flex-direction: row;
   }
 `;
 
@@ -42,10 +46,16 @@ const MarketCap = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #ff7ab8;
-  border-right: 1px solid #ff7ab8;
   width: 33.33%;
+  border-bottom: 1px solid #ff7ab8;
+  border-top: 1px solid #ff7ab8;
+  padding: 60px 0;
   @media ${device.tablet} {
+    border-left: 1px solid #ff7ab8;
+    border-right: 1px solid #ff7ab8;
+    border-bottom: none;
+    border-top: none;
+    padding: 0;
   }
 `;
 
@@ -81,16 +91,19 @@ const Title = styled.div`
 const BlockContainer = styled.div`
   width: calc(100vw - 100px);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  @media ${device.tablet} {
+  @media ${device.laptop} {
+    flex-direction: row;
   }
 `;
 
 const ChartContainer = styled.div`
-  width: 30%;
-  @media ${device.tablet} {
+  margin-top: 50px;
+  width: 100vw;
+  @media ${device.laptop} {
+    width: 30%;
   }
 `;
 

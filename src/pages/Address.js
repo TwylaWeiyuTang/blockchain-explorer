@@ -27,8 +27,11 @@ import AlertTx from "../components/AlertTx";
 import NotificationContext from "../config/Notification";
 
 const Container = styled.div`
-  padding: 0 50px;
+  padding: 0 10px;
+  width: 100vw;
+  overflow: hidden;
   @media ${device.tablet} {
+    padding: 0 50px;
   }
 `;
 
@@ -38,6 +41,7 @@ const Wrapper = styled.div`
 `;
 
 const ItemWrapper = styled.div`
+  overflow-x: scroll !important;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

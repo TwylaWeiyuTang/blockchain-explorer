@@ -12,8 +12,14 @@ import SearchBar from "./SearchBar";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 50px;
+  margin: 30px 0;
   @media ${device.tablet} {
+    margin-left: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  @media ${device.laptop} {
+    margin-left: 50px;
   }
 `;
 
@@ -26,7 +32,7 @@ const Header = () => {
         <img src={hamster} alt="logo" width={"80px"} /> Coco Da Explorer
       </Navbar.Brand>
       <Navbar.Toggle />
-      <Navbar.Collapse className="justify-content-end">
+      <Navbar.Collapse>
         {location.pathname !== "/" && <SearchBar />}
         <Wrapper>
           <ConnectButton>Sign In</ConnectButton>

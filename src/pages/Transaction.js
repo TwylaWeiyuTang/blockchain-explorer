@@ -11,8 +11,11 @@ import hamster from "../images/picsvg_download.svg";
 import { Badge } from "react-bootstrap";
 
 const Container = styled.div`
-  padding: 0 50px;
+  padding: 0 10px;
+  width: 100vw;
+  overflow: hidden;
   @media ${device.tablet} {
+    padding: 0 50px;
   }
 `;
 

@@ -8,13 +8,14 @@ import { device } from "../utils/utils";
 export const url = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_API_KEY}`;
 
 const Container = styled.div`
-  width: 100vw;
+  width: 90vw;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   aspect-ratio: 3/4;
+  margin: 50px 0;
 
   border: 3px solid #ff7ab8;
   background-color: #ff7ab8;
@@ -24,17 +25,19 @@ const Container = styled.div`
   @media ${device.tablet} {
   }
   @media ${device.laptop} {
+    margin: 0;
     width: 25vw;
   }
 `;
 
 const Title = styled.div`
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
   margin-bottom: 50px;
   text-transform: capitalize;
 
   @media ${device.tablet} {
+    font-size: 32px;
   }
 `;
 
@@ -46,9 +49,12 @@ const BlocksWrapper = styled.div`
   justify-content: space-around;
   align-items: center;
   a {
-    font-size: 24px;
+    font-size: 18px;
   }
   @media ${device.tablet} {
+    a {
+      font-size: 24px;
+    }
   }
 `;
 

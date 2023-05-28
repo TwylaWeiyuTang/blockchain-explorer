@@ -6,7 +6,7 @@ import search from "../images/search-icon.svg";
 import { useHistory } from "react-router-dom";
 
 const Container = styled.div`
-  height: 60px;
+  height: 80px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -16,14 +16,13 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   background-color: #ff7ab8;
-  width: 450px;
+  width: 80vw;
   border-radius: 10px;
   input {
     width: 100%;
     height: 48px;
     border-radius: 10px;
     border: none;
-    transform: translateY(-10px) translateX(10px);
     transition: all 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
   }
 
@@ -33,6 +32,14 @@ const Wrapper = styled.div`
     transform: none;
   }
   @media ${device.tablet} {
+    width: 65vw;
+  }
+  @media ${device.laptop} {
+    width: 450px;
+    input {
+      width: 100%;
+      transform: translateY(-10px) translateX(10px);
+    }
   }
 `;
 

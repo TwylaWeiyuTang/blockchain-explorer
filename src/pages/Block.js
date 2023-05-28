@@ -15,15 +15,18 @@ import hamster from "../images/picsvg_download.svg";
 import NotFound from "./NotFound";
 
 const Container = styled.div`
-  padding: 0 50px;
+  padding: 0 10px;
+  width: 100vw;
+  overflow: hidden;
   @media ${device.tablet} {
+    padding: 0 50px;
   }
 `;
 
 export const TitleWrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
 
   padding-bottom: 12px;
@@ -36,7 +39,9 @@ export const TitleWrapper = styled.div`
   .badge {
     color: #1a1b1f;
   }
-  @media ${device.tablet} {
+  @media ${device.laptop} {
+    align-items: center;
+    flex-direction: row;
   }
 `;
 
@@ -44,17 +49,24 @@ export const Title = styled.div`
   font-size: 20px;
   font-weight: 600px !important;
   margin-right: 20px;
-  @media ${device.tablet} {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: calc(100vw - 20px);
+  margin-bottom: 10px;
+  @media ${device.laptop} {
+    margin-bottom: 0;
   }
 `;
 
 export const Stats = styled.div`
-  height: 300px;
+  min-height: 400px;
   font-size: 16px;
+  padding-top: 50px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   @media ${device.tablet} {
+    min-height: 500px;
   }
 `;
 
@@ -62,34 +74,42 @@ export const StatsInner = styled.div`
   img {
     width: 50px;
   }
+
+  a {
+    overflow-wrap: break-word;
+  }
   @media ${device.tablet} {
   }
 `;
 
 export const Transactions = styled.div`
   background-color: #ff7ab8;
-  height: 600px;
-  border-radius: 50px;
+  min-height: 600px;
+  border-radius: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: #1a1b1f;
+  padding: 20px 0;
   @media ${device.tablet} {
+    border-radius: 50px;
   }
 `;
 
 export const TraTitle = styled.div`
-  width: calc(100vw - 200px);
+  width: calc(100vw - 50px);
   font-size: 20px;
   font-weight: 600;
   @media ${device.tablet} {
+    width: calc(100vw - 200px);
   }
 `;
 
 export const TableContainer = styled.div`
-  width: calc(100vw - 200px);
+  width: calc(100vw - 50px);
   @media ${device.tablet} {
+    width: calc(100vw - 200px);
   }
 `;
 
@@ -200,7 +220,7 @@ const Block = () => {
               %)
             </StatsInner>
             <StatsInner>
-              <img src={hamster} alt="hamster icon" /> Block reward to:
+              <img src={hamster} alt="hamster icon" /> Block reward to:{" "}
               <Link to={`/address/${blockData.miner}}`}>
                 {blockData.miner}{" "}
               </Link>
